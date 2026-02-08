@@ -1,0 +1,220 @@
+<!-- Event List Page -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold"><i class="fas fa-calendar-alt me-2"></i>Upcoming Events</h1>
+        <p class="text-muted">Discover and register for exciting community events</p>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3 mb-4">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('events.index') }}">
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <label class="form-label">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" name="search" 
+                                       value="{{ search }}" placeholder="Search events...">
+                            </div>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" name="category" onchange="this.form.submit()">
+                                <option value="">All Categories</option>
+                                <option value="conference" {% if category == 'conference' %}selected{% endif %}>Conference</option>
+                                <option value="workshop" {% if category == 'workshop' %}selected{% endif %}>Workshop</option>
+                                <option value="seminar" {% if category == 'seminar' %}selected{% endif %}>Seminar</option>
+                                <option value="meetup" {% if category == 'meetup' %}selected{% endif %}>Meetup</option>
+                                <option value="social" {% if category == 'social' %}selected{% endif %}>Social</option>
+                                <option value="sports" {% if category == 'sports' %}selected{% endif %}>Sports</option>
+                                <option value="cultural" {% if category == 'cultural' %}selected{% endif %}>Cultural</option>
+                                <option value="educational" {% if category == 'educational' %}selected{% endif %}>Educational</option>
+                                <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i>Apply Filters
+                            </button>
+                        </div>
+
+                        {% if search or category %}
+                            <div class="mt-3">
+                                <a href="{{ url_for('events.index') }}" class="btn btn-outline-secondary btn-sm w-100">
+                                    <i class="fas fa-times me-1"></i>Clear Filters
+                                </a>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Grid -->
+        <div class="col-lg-9">
+            {% if events %}
+                <div class="row g-4">
+                    {% for event in events %}
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm event-card">
+                                <div class="position-relative">
+                                    {% if event.image_filename %}
+                                        <img src="{{ url_for('static', filename='uploads/' + event.image_filename) }}" 
+                                             class="card-img-top" alt="{{ event.title }}" style="height: 180px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="card-img-top d-flex align-items-center justify-content-center bg-secondary" 
+                                             style="height: 180px;">
+                                            <i class="fas fa-calendar-alt fa-4x text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                    <span class="position-absolute top-0 start-0 m-3 badge bg-primary">
+                                        {{ event.category|title }}
+                                    </span>
+                                    {% if event.is_full %}
+                                        <span class="position-absolute top-0 end-0 m-3 badge bg-danger">
+                                            Full
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ event.title }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ event.description[:100] }}...
+                                    </p>
+                                    <ul class="list-unstyled small mb-3">
+                                        <li class="mb-1">
+                                            <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                            {{ event.event_date.strftime('%B %d, %Y at %I:%M %p') }}
+                                        </li>
+                                        <li class="mb-1">
+                                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                            {{ event.location }}
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-users text-primary me-2"></i>
+                                            {{ event.get_registration_count() }} / {{ event.capacity }} registered
+                                        </li>
+                                    </ul>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" 
+                                             data-width="{{ (event.get_registration_count() / event.capacity * 100)|round|int }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            View Details
+                                        </a>
+                                        {% if event.available_spots > 0 and event.is_registration_open %}
+                                            <small class="text-success">
+                                                {{ event.available_spots }} spots left
+                                            </small>
+                                        {% elif event.is_full %}
+                                            <small class="text-danger">Fully Booked</small>
+                                        {% else %}
+                                            <small class="text-muted">Registration Closed</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if pagination.pages > 1 %}
+                    <nav aria-label="Event pagination" class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            {% if pagination.has_prev %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('events.index', page=pagination.prev_num, category=category, search=search) }}">
+                                        Previous
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Previous</span>
+                                </li>
+                            {% endif %}
+
+                            {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+                                {% if page_num %}
+                                    {% if page_num == pagination.page %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ page_num }}</span>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ url_for('events.index', page=page_num, category=category, search=search) }}">
+                                                {{ page_num }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if pagination.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('events.index', page=pagination.next_num, category=category, search=search) }}">
+                                        Next
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Next</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Events Found</h4>
+                    <p class="text-muted">
+                        {% if search or category %}
+                            No events match your search criteria. Try different filters.
+                        {% else %}
+                            There are no upcoming events at the moment. Check back later!
+                        {% endif %}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set progress bar widths dynamically
+    document.querySelectorAll('.progress-bar').forEach(bar => {
+        const width = bar.getAttribute('data-width');
+        if (width) {
+            bar.style.width = width;
+        }
+    });
+</script>
+{% endblock %}

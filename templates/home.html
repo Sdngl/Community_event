@@ -1,0 +1,223 @@
+<!-- Home Page - Landing page with featured events -->
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container py-5">
+        <h1 class="display-4 fw-bold mb-4">Discover Amazing Community Events</h1>
+        <p class="lead mb-4">
+            Connect with your community, discover exciting events, and manage your registrations all in one place.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ url_for('events.index') }}" class="btn btn-light btn-lg px-5">
+                <i class="fas fa-search me-2"></i>Browse Events
+            </a>
+            {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg px-5">
+                    <i class="fas fa-user-plus me-2"></i>Join Now
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-4 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="stat-item">
+                    <h2 class="display-4 fw-bold text-primary">{{ total_events }}</h2>
+                    <p class="text-muted mb-0">Active Events</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div class="stat-item">
+                    <h2 class="display-4 fw-bold text-primary">{{ total_users }}</h2>
+                    <p class="text-muted mb-0">Community Members</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h2 class="display-4 fw-bold text-primary">100%</h2>
+                    <p class="text-muted mb-0">Free to Use</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Events Section -->
+{% if featured_events %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0"><i class="fas fa-star text-warning me-2"></i>Featured Events</h2>
+            <a href="{{ url_for('events.index') }}" class="btn btn-outline-primary">
+                View All <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="row">
+            {% for event in featured_events %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 event-card shadow-sm">
+                        <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">{{ event.category|title }}</span>
+                            <small class="text-muted">
+                                <i class="fas fa-users me-1"></i>{{ event.get_registration_count() }}/{{ event.capacity }}
+                            </small>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.title }}</h5>
+                            <p class="card-text text-muted">{{ event.description[:100] }}...</p>
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                    {{ event.event_date.strftime('%B %d, %Y') }}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                    {{ event.location }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 pt-0">
+                            <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-primary w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Upcoming Events Section -->
+{% if upcoming_events %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0"><i class="fas fa-calendar-check text-success me-2"></i>Upcoming Events</h2>
+            <a href="{{ url_for('events.index') }}" class="btn btn-outline-primary">
+                View All <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="row">
+            {% for event in upcoming_events %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 event-card">
+                        <div class="position-relative">
+                            {% if event.image_filename %}
+                                <img src="{{ url_for('static', filename='uploads/' + event.image_filename) }}" 
+                                     class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top d-flex align-items-center justify-content-center bg-secondary" 
+                                     style="height: 200px;">
+                                    <i class="fas fa-calendar-alt fa-4x text-white"></i>
+                                </div>
+                            {% endif %}
+                            <span class="position-absolute top-0 end-0 m-2 badge bg-primary">
+                                {{ event.category|title }}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.title }}</h5>
+                            <p class="card-text text-muted">{{ event.description[:80] }}...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ event.event_date.strftime('%b %d, %Y') }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{ event.location[:20] }}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-outline-primary btn-sm">
+                                Learn More
+                            </a>
+                            {% if event.available_spots > 0 %}
+                                <span class="float-end text-muted small">
+                                    {{ event.available_spots }} spots left
+                                </span>
+                            {% else %}
+                                <span class="float-end text-danger small">
+                                    Full
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose EventHub?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon bg-primary bg-gradient rounded-3 mb-3 mx-auto d-flex align-items-center justify-content-center" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-search fa-2x text-white"></i>
+                    </div>
+                    <h4>Easy Discovery</h4>
+                    <p class="text-muted">
+                        Find events that match your interests with our powerful search and filtering system.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon bg-success bg-gradient rounded-3 mb-3 mx-auto d-flex align-items-center justify-content-center" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-ticket-alt fa-2x text-white"></i>
+                    </div>
+                    <h4>Simple Registration</h4>
+                    <p class="text-muted">
+                        Register for events with just a few clicks. Manage all your registrations in one place.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon bg-info bg-gradient rounded-3 mb-3 mx-auto d-flex align-items-center justify-content-center" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-users fa-2x text-white"></i>
+                    </div>
+                    <h4>Community Building</h4>
+                    <p class="text-muted">
+                        Connect with like-minded people and build your community through shared interests.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container">
+        <h2 class="mb-4">Ready to Get Started?</h2>
+        <p class="lead mb-4">Join our community and start discovering amazing events today!</p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-5">
+                <i class="fas fa-user-plus me-2"></i>Create Free Account
+            </a>
+        {% else %}
+            <a href="{{ url_for('events.index') }}" class="btn btn-light btn-lg px-5">
+                <i class="fas fa-search me-2"></i>Browse Events
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

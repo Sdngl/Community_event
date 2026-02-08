@@ -1,0 +1,88 @@
+<!-- My Events Page -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold"><i class="fas fa-calendar-plus me-2"></i>My Events</h1>
+            <p class="text-muted mb-0">Events you have created</p>
+        </div>
+        {% if current_user.is_organizer() %}
+            <a href="{{ url_for('events.create_event') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Create Event
+            </a>
+        {% endif %}
+    </div>
+
+    {% if events %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Registrations</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="text-decoration-none">
+                                    <strong>{{ event.title }}</strong>
+                                </a>
+                                <small class="text-muted d-block">{{ event.location }}</small>
+                            </td>
+                            <td>{{ event.event_date.strftime('%b %d, %Y') }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ event.get_registration_count() }}/{{ event.capacity }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if event.status == 'published' else 'warning' if event.status == 'draft' else 'danger' }}">
+                                    {{ event.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('events.event_detail', event_id=event.id) }}" 
+                                       class="btn btn-outline-primary" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('events.edit_event', event_id=event.id) }}" 
+                                       class="btn btn-outline-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ url_for('events.delete_event', event_id=event.id) }}" 
+                                          method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger" 
+                                                title="Delete"
+                                                onclick="return confirm('Delete this event?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-plus fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No Events Created</h4>
+            <p class="text-muted mb-4">You haven't created any events yet.</p>
+            {% if current_user.is_organizer() %}
+                <a href="{{ url_for('events.create_event') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Create Your First Event
+                </a>
+            {% else %}
+                <p class="text-muted small">Contact admin to become an organizer.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,250 @@
+<!-- Admin Dashboard -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold"><i class="fas fa-cogs me-2"></i>Admin Dashboard</h1>
+            <p class="text-muted mb-0">Manage your EventHub platform</p>
+        </div>
+        <div class="btn-group">
+            <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-primary">
+                <i class="fas fa-users me-1"></i>Manage Users
+            </a>
+            <a href="{{ url_for('admin.manage_events') }}" class="btn btn-outline-primary">
+                <i class="fas fa-calendar me-1"></i>Manage Events
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-primary bg-gradient rounded-3 d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-users fa-2x text-white"></i>
+                    </div>
+                    <h2 class="fw-bold mb-0">{{ total_users }}</h2>
+                    <p class="text-muted mb-0">Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-success bg-gradient rounded-3 d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-calendar-check fa-2x text-white"></i>
+                    </div>
+                    <h2 class="fw-bold mb-0">{{ total_events }}</h2>
+                    <p class="text-muted mb-0">Total Events</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-info bg-gradient rounded-3 d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-ticket-alt fa-2x text-white"></i>
+                    </div>
+                    <h2 class="fw-bold mb-0">{{ total_registrations }}</h2>
+                    <p class="text-muted mb-0">Total Registrations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="bg-warning bg-gradient rounded-3 d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-chart-line fa-2x text-white"></i>
+                    </div>
+                    <h2 class="fw-bold mb-0">{{ published_count }}</h2>
+                    <p class="text-muted mb-0">Published Events</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- User Statistics -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>User Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-shield-alt text-primary me-2"></i>Admins</span>
+                        <span class="badge bg-primary">{{ admin_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-briefcase text-success me-2"></i>Organizers</span>
+                        <span class="badge bg-success">{{ organizer_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-user text-secondary me-2"></i>Regular Users</span>
+                        <span class="badge bg-secondary">{{ user_count }}</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-primary btn-sm w-100">
+                        Manage Users
+                    </a>
+                </div>
+            </div>
+
+            <!-- Event Statistics -->
+            <div class="card border-0 shadow mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Event Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-check-circle text-success me-2"></i>Published</span>
+                        <span class="badge bg-success">{{ published_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span><i class="fas fa-edit text-warning me-2"></i>Drafts</span>
+                        <span class="badge bg-warning text-dark">{{ draft_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-times-circle text-danger me-2"></i>Cancelled</span>
+                        <span class="badge bg-danger">{{ cancelled_count }}</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('admin.manage_events') }}" class="btn btn-outline-primary btn-sm w-100">
+                        Manage Events
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin.statistics') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-chart-bar me-2"></i>View Statistics
+                        </a>
+                        <a href="{{ url_for('admin.all_registrations') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>All Registrations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow mb-4">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Upcoming Events</h5>
+                    <a href="{{ url_for('admin.manage_events') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_events %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Event</th>
+                                        <th>Date</th>
+                                        <th>Registrations</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for event in upcoming_events %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('events.event_detail', event_id=event.id) }}" 
+                                                   class="text-decoration-none">
+                                                    {{ event.title }}
+                                                </a>
+                                            </td>
+                                            <td>{{ event.event_date.strftime('%b %d, %Y') }}</td>
+                                            <td>{{ event.get_registration_count() }}/{{ event.capacity }}</td>
+                                            <td>
+                                                <span class="badge bg-{{ 'success' if event.status == 'published' else 'warning' }}">
+                                                    {{ event.status|title }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No upcoming events</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Registrations -->
+            <div class="card border-0 shadow">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Recent Registrations</h5>
+                    <a href="{{ url_for('admin.all_registrations') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_registrations %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Event</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reg in recent_registrations %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('main.profile', username=reg.user.username) }}" 
+                                                   class="text-decoration-none">
+                                                    {{ reg.user.username }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('events.event_detail', event_id=reg.event.id) }}" 
+                                                   class="text-decoration-none">
+                                                    {{ reg.event.title }}
+                                                </a>
+                                            </td>
+                                            <td>{{ reg.registration_date.strftime('%b %d, %Y') }}</td>
+                                            <td>
+                                                <span class="badge bg-{{ 'success' if reg.status == 'registered' else 'warning' }}">
+                                                    {{ reg.status|title }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-ticket-alt fa-3x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No recent registrations</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,183 @@
+<!-- Create Event Page -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="fw-bold"><i class="fas fa-calendar-plus me-2"></i>Create New Event</h1>
+                <p class="text-muted">Fill in the details to create your event</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <form method="POST" action="{{ url_for('events.create_event') }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Event Title -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-medium">Event Title <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fas fa-heading"></i>
+                                </span>
+                                {{ form.title(class="form-control", placeholder="Enter event title") }}
+                            </div>
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.title.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Category & Status Row -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Category <span class="text-danger">*</span></label>
+                                {{ form.category(class="form-select") }}
+                                {% if form.category.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.category.errors[0] }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Status <span class="text-danger">*</span></label>
+                                {{ form.status(class="form-select") }}
+                                {% if form.status.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.status.errors[0] }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Choose 'Published' to make event visible to others</div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-medium">Description <span class="text-danger">*</span></label>
+                            {{ form.description(class="form-control", rows="5", placeholder="Describe your event in detail...") }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.description.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-4">
+                            <label for="location" class="form-label fw-medium">Location <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </span>
+                                {{ form.location(class="form-control", placeholder="Enter event location or 'Online'") }}
+                            </div>
+                            {% if form.location.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.location.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Date & Time Row -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Event Date & Time <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                    {{ form.event_date(class="form-control", type="datetime-local") }}
+                                </div>
+                                {% if form.event_date.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.event_date.errors[0] }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Registration Deadline</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-clock"></i>
+                                    </span>
+                                    {{ form.registration_deadline(class="form-control", type="datetime-local") }}
+                                </div>
+                                {% if form.registration_deadline.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.registration_deadline.errors[0] }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Leave empty for no deadline</div>
+                            </div>
+                        </div>
+
+                        <!-- Capacity -->
+                        <div class="mb-4">
+                            <label for="capacity" class="form-label fw-medium">Event Capacity <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                {{ form.capacity(class="form-control", type="number", min="1", placeholder="100") }}
+                            </div>
+                            {% if form.capacity.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.capacity.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-4">
+                            <label for="image" class="form-label fw-medium">Event Banner Image</label>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                    <div class="form-text mt-2">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Allowed formats: PNG, JPG, JPEG, GIF. Max size: 16MB
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tips Card -->
+                        <div class="card bg-info bg-opacity-10 border-info mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="fas fa-lightbulb me-2"></i>Tips for a Great Event</h6>
+                                <ul class="mb-0 small">
+                                    <li>Choose a clear, descriptive title</li>
+                                    <li>Provide a detailed description so attendees know what to expect</li>
+                                    <li>Add a high-quality banner image to attract attention</li>
+                                    <li>Set a reasonable capacity for your venue</li>
+                                    <li>Publish your event only when ready to accept registrations</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Cancel
+                            </a>
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="save_draft" value="draft" class="btn btn-outline-primary">
+                                    <i class="fas fa-save me-1"></i>Save as Draft
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-calendar-plus me-1"></i>Create Event
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
