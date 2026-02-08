@@ -203,5 +203,9 @@ if __name__ == '__main__':
     # Create app instance
     app = create_app('development')
     
+    # Get port from environment or use default
+    port = int(os.environ.get('FLASK_RUN_PORT', 5002))
+    host = os.environ.get('FLASK_RUN_HOST', '0.0.0.0')
+    
     # Run the application
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host=host, port=port)
