@@ -1,17 +1,19 @@
-<!-- Login Page -->
+<!-- Login Page - Welcome Back -->
 {% extends "base.html" %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+        <div class="col-md-5 col-lg-4">
             <div class="card border-0 shadow-lg">
                 <div class="card-body p-5">
                     <!-- Header -->
                     <div class="text-center mb-4">
-                        <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
-                        <h2 class="fw-bold">Welcome Back</h2>
-                        <p class="text-muted">Sign in to your account</p>
+                        <div class="icon-box bg-primary bg-gradient mx-auto mb-3" style="width: 64px; height: 64px;">
+                            <i class="fas fa-user-circle fa-2x text-white"></i>
+                        </div>
+                        <h2 class="fw-bold mb-1">Welcome Back</h2>
+                        <p class="text-muted mb-0">Sign in to continue to EventHub</p>
                     </div>
 
                     <!-- Login Form -->
@@ -23,7 +25,7 @@
                             <label for="email_or_username" class="form-label">Email or Username</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
-                                    <i class="fas fa-envelope"></i>
+                                    <i class="fas fa-envelope text-muted"></i>
                                 </span>
                                 <input type="text" class="form-control" id="email_or_username" 
                                        name="email_or_username" placeholder="Enter your email or username"
@@ -41,12 +43,12 @@
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
-                                    <i class="fas fa-lock"></i>
+                                    <i class="fas fa-lock text-muted"></i>
                                 </span>
                                 <input type="password" class="form-control" id="password" 
                                        name="password" placeholder="Enter your password" required>
                                 <button class="btn btn-outline-secondary toggle-password" type="button">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="fas fa-eye text-muted"></i>
                                 </button>
                             </div>
                             {% if form.password.errors %}
@@ -60,9 +62,9 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                                <label class="form-check-label" for="remember">Remember me</label>
+                                <label class="form-check-label text-muted" for="remember">Remember me</label>
                             </div>
-                            <a href="{{ url_for('auth.reset_password_request') }}" class="text-decoration-none">
+                            <a href="{{ url_for('auth.reset_password_request') }}" class="text-decoration-none small">
                                 Forgot password?
                             </a>
                         </div>
@@ -77,7 +79,7 @@
 
                     <!-- Divider -->
                     <div class="my-4 text-center">
-                        <span class="text-muted">Don't have an account?</span>
+                        <span class="text-muted small">Don't have an account yet?</span>
                     </div>
 
                     <!-- Register Link -->
@@ -88,22 +90,29 @@
                     </div>
 
                     <!-- Demo Credentials -->
-                    <div class="mt-4 p-3 bg-light rounded">
+                    <div class="mt-4 p-3 bg-light rounded-lg">
                         <p class="text-muted small mb-2 text-center">
-                            <strong>Demo Credentials:</strong>
+                            <strong class="text-dark">Demo Credentials:</strong>
                         </p>
                         <div class="row text-center small">
                             <div class="col-6 border-end">
-                                <strong>Admin:</strong><br>
-                                admin / admin123
+                                <span class="text-muted">Admin:</span><br>
+                                <code class="text-primary">admin / admin123</code>
                             </div>
                             <div class="col-6">
-                                <strong>User:</strong><br>
-                                user / user123
+                                <span class="text-muted">User:</span><br>
+                                <code class="text-primary">user / user123</code>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Back to Home -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('main.home') }}" class="text-muted text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Home
+                </a>
             </div>
         </div>
     </div>

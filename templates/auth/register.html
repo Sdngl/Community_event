@@ -1,17 +1,19 @@
-<!-- Register Page -->
+<!-- Register Page - Join Our Community -->
 {% extends "base.html" %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+        <div class="col-md-7 col-lg-6">
             <div class="card border-0 shadow-lg">
                 <div class="card-body p-5">
                     <!-- Header -->
                     <div class="text-center mb-4">
-                        <i class="fas fa-user-plus fa-4x text-primary mb-3"></i>
-                        <h2 class="fw-bold">Create Account</h2>
-                        <p class="text-muted">Join our community today</p>
+                        <div class="icon-box bg-primary bg-gradient mx-auto mb-3" style="width: 64px; height: 64px;">
+                            <i class="fas fa-user-plus fa-2x text-white"></i>
+                        </div>
+                        <h2 class="fw-bold mb-1">Join EventHub</h2>
+                        <p class="text-muted mb-0">Create your account and start discovering events</p>
                     </div>
 
                     <!-- Registration Form -->
@@ -23,9 +25,9 @@
                             {{ form.username.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
-                                    <i class="fas fa-user"></i>
+                                    <i class="fas fa-user text-muted"></i>
                                 </span>
-                                {{ form.username(class="form-control", placeholder="Choose a username") }}
+                                {{ form.username(class="form-control", placeholder="Choose a unique username") }}
                             </div>
                             {% if form.username.errors %}
                                 <div class="text-danger small mt-1">
@@ -39,9 +41,9 @@
                             {{ form.email.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
-                                    <i class="fas fa-envelope"></i>
+                                    <i class="fas fa-envelope text-muted"></i>
                                 </span>
-                                {{ form.email(class="form-control", placeholder="Enter your email") }}
+                                {{ form.email(class="form-control", placeholder="Enter your email address") }}
                             </div>
                             {% if form.email.errors %}
                                 <div class="text-danger small mt-1">
@@ -77,11 +79,11 @@
                             {{ form.password.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
-                                    <i class="fas fa-lock"></i>
+                                    <i class="fas fa-lock text-muted"></i>
                                 </span>
-                                {{ form.password(class="form-control", placeholder="Create a password") }}
+                                {{ form.password(class="form-control", placeholder="Create a strong password") }}
                                 <button class="btn btn-outline-secondary toggle-password" type="button">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="fas fa-eye text-muted"></i>
                                 </button>
                             </div>
                             {% if form.password.errors %}
@@ -89,7 +91,7 @@
                                     {{ form.password.errors[0] }}
                                 </div>
                             {% endif %}
-                            <div class="form-text">Must be at least 6 characters</div>
+                            <div class="form-text">Use at least 8 characters with letters and numbers</div>
                         </div>
 
                         <!-- Confirm Password Field -->
@@ -97,7 +99,7 @@
                             {{ form.confirm_password.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
-                                    <i class="fas fa-lock"></i>
+                                    <i class="fas fa-lock text-muted"></i>
                                 </span>
                                 {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
                             </div>
@@ -112,7 +114,7 @@
                         <div class="mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="terms" required>
-                                <label class="form-check-label" for="terms">
+                                <label class="form-check-label text-muted small" for="terms">
                                     I agree to the <a href="{{ url_for('main.terms') }}">Terms of Service</a> 
                                     and <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>
                                 </label>
@@ -129,7 +131,7 @@
 
                     <!-- Divider -->
                     <div class="my-4 text-center">
-                        <span class="text-muted">Already have an account?</span>
+                        <span class="text-muted small">Already have an account?</span>
                     </div>
 
                     <!-- Login Link -->
@@ -139,6 +141,13 @@
                         </a>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Back to Home -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('main.home') }}" class="text-muted text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Home
+                </a>
             </div>
         </div>
     </div>
@@ -163,30 +172,5 @@
             }
         });
     });
-
-    // Password strength indicator
-    const passwordInput = document.querySelector('input[name="password"]');
-    const strengthBar = document.getElementById('password-strength');
-    
-    passwordInput.addEventListener('input', function() {
-        const strength = calculatePasswordStrength(this.value);
-        updateStrengthBar(strength);
-    });
-
-    function calculatePasswordStrength(password) {
-        let strength = 0;
-        if (password.length >= 6) strength++;
-        if (password.length >= 10) strength++;
-        if (/[A-Z]/.test(password)) strength++;
-        if (/[0-9]/.test(password)) strength++;
-        if (/[^A-Za-z0-9]/.test(password)) strength++;
-        return strength;
-    }
-
-    function updateStrengthBar(strength) {
-        const colors = ['#dc3545', '#ffc107', '#28a745'];
-        const labels = ['Weak', 'Medium', 'Strong'];
-        // This is a simplified version - you can expand it
-    }
 </script>
 {% endblock %}

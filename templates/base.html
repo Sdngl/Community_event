@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Community Event Management System - Discover and register for community events">
+    <meta name="description" content="EventHub - Discover and register for amazing community events">
     <title>{% if title %}{{ title }} - EventHub{% else %}EventHub - Community Event Management{% endif %}</title>
     
     <!-- Bootstrap CSS -->
@@ -15,15 +15,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.home') }}">
-                <i class="fas fa-calendar-alt me-2"></i>EventHub
+                <i class="fas fa-calendar-check text-primary me-2"></i>
+                <span class="fw-bold">EventHub</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -32,22 +34,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.home') }}">
+                        <a class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}" href="{{ url_for('main.home') }}">
                             <i class="fas fa-home me-1"></i>Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('events.index') }}">
-                            <i class="fas fa-search me-1"></i>Browse Events
+                        <a class="nav-link {% if 'event' in request.endpoint %}active{% endif %}" href="{{ url_for('events.index') }}">
+                            <i class="fas fa-compass me-1"></i>Browse Events
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.about') }}">
+                        <a class="nav-link {% if request.endpoint == 'main.about' %}active{% endif %}" href="{{ url_for('main.about') }}">
                             <i class="fas fa-info-circle me-1"></i>About
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.contact') }}">
+                        <a class="nav-link {% if request.endpoint == 'main.contact' %}active{% endif %}" href="{{ url_for('main.contact') }}">
                             <i class="fas fa-envelope me-1"></i>Contact
                         </a>
                     </li>
@@ -56,9 +58,12 @@
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" 
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+                                <div class="avatar avatar-sm me-2" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                    {{ current_user.username[0].upper() }}
+                                </div>
+                                <span class="d-none d-md-inline">{{ current_user.username }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li>
@@ -99,7 +104,7 @@
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                    <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </a>
                                 </li>
@@ -112,7 +117,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-light text-primary ms-2" href="{{ url_for('auth.register') }}">
+                            <a class="nav-link btn btn-primary text-white ms-lg-2 px-3" href="{{ url_for('auth.register') }}" style="border-radius: var(--radius);">
                                 <i class="fas fa-user-plus me-1"></i>Register
                             </a>
                         </li>
@@ -127,7 +132,16 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                        {% if category == 'success' %}
+                            <i class="fas fa-check-circle me-2"></i>
+                        {% elif category == 'danger' %}
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                        {% elif category == 'warning' %}
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% elif category == 'info' %}
+                            <i class="fas fa-info-circle me-2"></i>
+                        {% endif %}
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
@@ -142,43 +156,58 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer mt-5 py-4 bg-dark text-light">
+    <footer class="footer">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5><i class="fas fa-calendar-alt me-2"></i>EventHub</h5>
-                    <p class="text-muted">
-                        Your central hub for discovering and managing community events.
+            <div class="row g-4">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="footer-brand mb-3">
+                        <i class="fas fa-calendar-check me-2"></i>EventHub
+                    </div>
+                    <p class="text-muted mb-3">
+                        Your central hub for discovering and managing community events. 
                         Connect with people and participate in exciting activities.
                     </p>
+                    <div class="social-links">
+                        <a href="#" class="text-decoration-none"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-decoration-none"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-decoration-none"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-decoration-none"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
                     <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('main.home') }}" class="text-muted">Home</a></li>
-                        <li><a href="{{ url_for('events.index') }}" class="text-muted">Browse Events</a></li>
-                        <li><a href="{{ url_for('main.about') }}" class="text-muted">About Us</a></li>
-                        <li><a href="{{ url_for('main.contact') }}" class="text-muted">Contact</a></li>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                        <li><a href="{{ url_for('events.index') }}">Browse Events</a></li>
+                        <li><a href="{{ url_for('main.about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('main.contact') }}">Contact</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h5>Connect With Us</h5>
-                    <div class="social-links">
-                        <a href="#" class="text-muted me-3"><i class="fab fa-facebook fa-lg"></i></a>
-                        <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="text-muted me-3"><i class="fab fa-instagram fa-lg"></i></a>
-                        <a href="#" class="text-muted"><i class="fab fa-linkedin fa-lg"></i></a>
-                    </div>
+                <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                    <h5>Categories</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('events.index') }}?category=workshop">Workshops</a></li>
+                        <li><a href="{{ url_for('events.index') }}?category=meetup">Meetups</a></li>
+                        <li><a href="{{ url_for('events.index') }}?category=conference">Conferences</a></li>
+                        <li><a href="{{ url_for('events.index') }}?category=social">Social</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5>Support</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.faq') }}">FAQ</a></li>
+                        <li><a href="{{ url_for('main.privacy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ url_for('main.terms') }}">Terms of Service</a></li>
+                    </ul>
                 </div>
             </div>
             <hr class="my-4 border-secondary">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col-md-6 text-muted">
                     &copy; 2024 EventHub. All rights reserved.
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <a href="{{ url_for('main.privacy') }}" class="text-muted me-3">Privacy Policy</a>
-                    <a href="{{ url_for('main.terms') }}" class="text-muted">Terms of Service</a>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <span class="text-muted">Made with <i class="fas fa-heart text-danger"></i> for communities</span>
                 </div>
             </div>
         </div>
