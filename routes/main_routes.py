@@ -6,7 +6,7 @@ Handles general website navigation and user-facing pages.
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
 from forms import UpdateProfileForm
-from models import User, Event, EventRegistration
+from models import User, Event, EventRegistration, Notification, db
 from datetime import datetime
 from sqlalchemy import func
 
@@ -307,3 +307,97 @@ def internal_server_error(e):
         Rendered 500 error template
     """
     return render_template('errors/500.html', title='Server Error'), 500
+
+
+@main_bp.route('/notifications')
+@login_required
+def notifications():
+    """
+    Display user notifications.
+    
+    Returns:
+        Rendered notifications template
+    """
+    # Get all notifications for user
+    notifications = Notification.query.filter_by(
+        user_id=current_user.id
+    ).order_by(Notification.created_at.desc()).limit(50).all()
+    
+    # Get unread count
+    unread_count = Notification.query.filter_by(
+        user_id=current_user.id,
+        is_read=False
+    ).count()
+    
+    return render_template(
+        'notifications.html',
+        title='Notifications',
+        notifications=notifications,
+        unread_count=unread_count
+    )
+
+
+@main_bp.route('/notifications/mark-read/<int:notification_id>')
+@login_required
+def mark_notification_read(notification_id):
+    """
+    Mark a notification as read.
+    
+    Args:
+        notification_id: ID of the notification
+    
+    Returns:
+        Redirect to notifications page
+    """
+    notification = Notification.query.filter_by(
+        id=notification_id,
+        user_id=current_user.id
+    ).first_or_404()
+    
+    notification.mark_as_read()
+    
+    return redirect(url_for('main.notifications'))
+
+
+@main_bp.route('/notifications/mark-all-read')
+@login_required
+def mark_all_notifications_read():
+    """
+    Mark all notifications as read.
+    
+    Returns:
+        Redirect to notifications page
+    """
+    Notification.query.filter_by(
+        user_id=current_user.id,
+        is_read=False
+    ).update({'is_read': True})
+    db.session.commit()
+    
+    flash('All notifications marked as read.', 'success')
+    return redirect(url_for('main.notifications'))
+
+
+@main_bp.route('/api/notifications')
+@login_required
+def api_notifications():
+    """
+    API endpoint to get recent notifications.
+    
+    Returns:
+        JSON response with notifications
+    """
+    notifications = Notification.query.filter_by(
+        user_id=current_user.id
+    ).order_by(Notification.created_at.desc()).limit(10).all()
+    
+    unread_count = Notification.query.filter_by(
+        user_id=current_user.id,
+        is_read=False
+    ).count()
+    
+    return {
+        'success': True,
+        'notifications': [n.to_dict() for n in notifications],
+        'unread_count': unread_count
+    }

@@ -6,8 +6,8 @@ Handles event listing, creation, viewing, editing, and registration.
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
 from forms import EventForm, SearchForm
-from models import Event, EventRegistration, User, db
-from datetime import datetime
+from models import Event, EventRegistration, User, Category, Tag, db
+from datetime import datetime, timedelta
 import os
 from werkzeug.utils import secure_filename
 
@@ -39,6 +39,9 @@ def index():
         page: Page number for pagination
         category: Filter by category
         search: Search query
+        location: Filter by location
+        date_from: Filter events from this date
+        date_to: Filter events until this date
     
     Returns:
         Rendered event list template
@@ -48,6 +51,8 @@ def index():
     category = request.args.get('category', '')
     search = request.args.get('search', '')
     location = request.args.get('location', '')
+    date_from = request.args.get('date_from', '')
+    date_to = request.args.get('date_to', '')
     
     # Build base query for published, upcoming events
     query = Event.query.filter(
@@ -68,6 +73,20 @@ def index():
     if location:
         query = query.filter(Event.location.ilike(f'%{location}%'))
     
+    if date_from:
+        try:
+            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
+            query = query.filter(Event.event_date >= date_from_obj)
+        except ValueError:
+            pass
+    
+    if date_to:
+        try:
+            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+            query = query.filter(Event.event_date <= date_to_obj)
+        except ValueError:
+            pass
+    
     # Order by event date
     query = query.order_by(Event.event_date.asc())
     
@@ -78,21 +97,84 @@ def index():
         error_out=False
     )
     
-    # Create search form with pre-filled values
-    search_form = SearchForm(
-        search=search,
-        category=category,
-        location=location
-    )
+    # Get categories for filter dropdown
+    categories = Category.query.all()
     
     return render_template(
         'events/event_list.html',
         title='Upcoming Events',
         events=pagination.items,
         pagination=pagination,
-        search_form=search_form,
         category=category,
-        search=search
+        search=search,
+        location=location,
+        date_from=date_from,
+        date_to=date_to,
+        categories=categories
+    )
+
+
+@events_bp.route('/calendar')
+def calendar():
+    """
+    Display events in calendar view.
+    
+    Query parameters:
+        year: Year to display
+        month: Month to display
+    
+    Returns:
+        Rendered calendar template
+    """
+    # Get year and month from query params or use current date
+    now = datetime.utcnow()
+    year = request.args.get('year', now.year, type=int)
+    month = request.args.get('month', now.month, type=int)
+    
+    # Get first day of the month
+    first_day = datetime(year, month, 1)
+    
+    # Get last day of the month
+    if month == 12:
+        last_day = datetime(year + 1, 1, 1) - timedelta(days=1)
+    else:
+        last_day = datetime(year, month + 1, 1) - timedelta(days=1)
+    
+    # Get events for this month
+    events = Event.query.filter(
+        Event.status == 'published',
+        Event.event_date >= first_day,
+        Event.event_date <= last_day
+    ).order_by(Event.event_date).all()
+    
+    # Group events by date
+    events_by_date = {}
+    for event in events:
+        date_key = event.event_date.strftime('%Y-%m-%d')
+        if date_key not in events_by_date:
+            events_by_date[date_key] = []
+        events_by_date[date_key].append(event)
+    
+    # Get previous and next month
+    prev_month = month - 1 if month > 1 else 12
+    prev_year = year if month > 1 else year - 1
+    next_month = month + 1 if month < 12 else 1
+    next_year = year if month < 12 else year + 1
+    
+    # Month name
+    month_name = first_day.strftime('%B %Y')
+    
+    return render_template(
+        'events/calendar.html',
+        title='Event Calendar',
+        events_by_date=events_by_date,
+        year=year,
+        month=month,
+        month_name=month_name,
+        prev_year=prev_year,
+        prev_month=prev_month,
+        next_year=next_year,
+        next_month=next_month
     )
 
 

@@ -252,3 +252,133 @@ class EventRegistration(db.Model):
             'registration_date': self.registration_date.isoformat(),
             'status': self.status
         }
+
+
+class Category(db.Model):
+    """
+    Category model for organizing events.
+    
+    Attributes:
+        id: Unique category identifier
+        name: Category name
+        slug: URL-friendly category slug
+        description: Category description
+        icon: Font Awesome icon class
+        color: Bootstrap color class
+    """
+    
+    __tablename__ = 'categories'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    slug = db.Column(db.String(50), unique=True, nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+    icon = db.Column(db.String(50), default='fa-calendar')
+    color = db.Column(db.String(20), default='primary')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    # Relationship
+    events = db.relationship('Event', backref='category_rel', lazy='dynamic')
+    
+    def __repr__(self):
+        return f'<Category {self.name}>'
+    
+    @staticmethod
+    def get_all_categories():
+        """Get all categories ordered by name."""
+        return Category.query.order_by(Category.name).all()
+
+
+class Tag(db.Model):
+    """
+    Tag model for tagging events with keywords.
+    
+    Attributes:
+        id: Unique tag identifier
+        name: Tag name
+        slug: URL-friendly tag slug
+    """
+    
+    __tablename__ = 'tags'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    slug = db.Column(db.String(50), unique=True, nullable=False)
+    
+    # Relationship
+    events = db.relationship('Event', secondary='event_tags', backref='tags')
+    
+    def __repr__(self):
+        return f'<Tag {self.name}>'
+
+
+class EventTag(db.Model):
+    """
+    Association table for Event-Tag many-to-many relationship.
+    """
+    
+    __tablename__ = 'event_tags'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), nullable=False)
+
+
+class Notification(db.Model):
+    """
+    Notification model for user notifications.
+    
+    Attributes:
+        id: Unique notification identifier
+        user_id: Foreign key to User
+        title: Notification title
+        message: Notification message
+        type: Notification type (info, success, warning, danger)
+        is_read: Read status
+        created_at: Creation timestamp
+    """
+    
+    __tablename__ = 'notifications'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=True)
+    notification_type = db.Column(db.String(20), default='info')
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    # Relationship
+    user = db.relationship('User', backref='notifications')
+    
+    def __repr__(self):
+        return f'<Notification {self.id} for User {self.user_id}>'
+    
+    @staticmethod
+    def create_notification(user_id, title, message, notification_type='info'):
+        """Create a new notification for a user."""
+        notification = Notification(
+            user_id=user_id,
+            title=title,
+            message=message,
+            notification_type=notification_type
+        )
+        db.session.add(notification)
+        db.session.commit()
+        return notification
+    
+    def mark_as_read(self):
+        """Mark notification as read."""
+        self.is_read = True
+        db.session.commit()
+    
+    def to_dict(self):
+        """Convert notification to dictionary."""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'message': self.message,
+            'type': self.notification_type,
+            'is_read': self.is_read,
+            'created_at': self.created_at.isoformat()
+        }

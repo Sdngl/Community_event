@@ -48,7 +48,10 @@ def create_app(config_name='default'):
             'db': db,
             'User': User,
             'Event': Event,
-            'EventRegistration': EventRegistration
+            'EventRegistration': EventRegistration,
+            'Category': Category,
+            'Tag': Tag,
+            'Notification': Notification
         }
     
     # Register template filters

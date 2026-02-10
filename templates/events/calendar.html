@@ -1,0 +1,136 @@
+<!-- Event Calendar Page -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold"><i class="fas fa-calendar me-2"></i>Event Calendar</h1>
+            <p class="text-muted">Browse events by date</p>
+        </div>
+        <div class="btn-group">
+            <a href="{{ url_for('events.calendar', year=prev_year, month=prev_month) }}" class="btn btn-outline-primary">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+            <a href="{{ url_for('events.calendar') }}" class="btn btn-outline-secondary">
+                Today
+            </a>
+            <a href="{{ url_for('events.calendar', year=next_year, month=next_month) }}" class="btn btn-outline-primary">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Month Title -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">{{ month_name }}</h2>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="card border-0 shadow">
+        <div class="card-body p-4">
+            <!-- Weekday Headers -->
+            <div class="row mb-3">
+                {% for day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
+                    <div class="col text-center fw-bold text-muted py-2">
+                        {{ day }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Calendar Days -->
+            {% set first_day_of_week = first_day.strftime('%w')|int %}
+            {% set days_in_month = (last_day - first_day).days + 1 %}
+            
+            <div class="row g-2">
+                <!-- Empty cells before first day -->
+                {% for i in range(first_day_of_week) %}
+                    <div class="col-1"></div>
+                {% endfor %}
+                
+                <!-- Days of the month -->
+                {% for day in range(1, days_in_month + 1) %}
+                    {% set current_date = datetime(year, month, day) %}
+                    {% set date_key = current_date.strftime('%Y-%m-%d') %}
+                    {% set day_events = events_by_date.get(date_key, []) %}
+                    {% set is_today = current_date.strftime('%Y-%m-%d') == now.strftime('%Y-%m-%d') %}
+                    {% set is_past = current_date < now %}
+                    
+                    <div class="col-1">
+                        <div class="calendar-day p-2 rounded {% if is_today %}bg-primary text-white{% elif is_past %}bg-light text-muted{% else %}bg-white border{% endif %}" style="min-height: 100px;">
+                            <div class="fw-bold {% if is_today %}text-white{% endif %}">{{ day }}</div>
+                            
+                            {% if day_events %}
+                                <div class="mt-1">
+                                    {% for event in day_events[:2] %}
+                                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" 
+                                           class="d-block text-decoration-none small {% if is_today or is_past %}text-white{% else %}text-primary{% endif %} truncate"
+                                           title="{{ event.title }}">
+                                            {% if event.image_filename %}
+                                                <img src="{{ url_for('static', filename='uploads/' + event.image_filename) }}" 
+                                                     class="rounded me-1" style="width: 16px; height: 16px; object-fit: cover;">
+                                            {% else %}
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                            {% endif %}
+                                            {{ event.title[:15] }}{{ '...' if event.title|length > 15 else '' }}
+                                        </a>
+                                    {% endfor %}
+                                    {% if day_events|length > 2 %}
+                                        <small class="{% if is_today or is_past %}text-white{% else %}text-muted{% endif %}">
+                                            +{{ day_events|length - 2 }} more
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- New row every 7 days -->
+                    {% if (first_day_of_week + day) % 7 == 0 and day < days_in_month %}
+                        </div><div class="row g-2">
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Empty cells after last day -->
+                {% set remaining_cells = (7 - ((first_day_of_week + days_in_month) % 7)) % 7 %}
+                {% for i in range(remaining_cells) %}
+                    <div class="col-1"></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="mt-4 text-center">
+        <span class="me-3"><span class="badge bg-primary me-1"></span> Today</span>
+        <span class="me-3"><span class="badge bg-light border me-1"></span> Upcoming</span>
+        <span class="me-3"><span class="badge bg-secondary me-1"></span> Past</span>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="mt-4 text-center">
+        <a href="{{ url_for('events.index') }}" class="btn btn-outline-primary">
+            <i class="fas fa-list me-2"></i>View as List
+        </a>
+    </div>
+</div>
+
+<style>
+.calendar-day {
+    transition: all 0.2s ease;
+}
+.calendar-day:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+.calendar-day:hover a {
+    color: white !important;
+}
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+{% endblock %}
