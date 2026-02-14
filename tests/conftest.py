@@ -49,7 +49,11 @@ def test_user(app):
         )
         db.session.add(user)
         db.session.commit()
-        return user
+        user_id = user.id
+    
+    # Return a fresh user instance
+    with app.app_context():
+        return User.query.get(user_id)
 
 
 @pytest.fixture
@@ -66,13 +70,31 @@ def admin_user(app):
         )
         db.session.add(user)
         db.session.commit()
-        return user
+        user_id = user.id
+    
+    # Return a fresh user instance
+    with app.app_context():
+        return User.query.get(user_id)
 
 
 @pytest.fixture
-def test_event(app, test_user):
+def test_event(app):
     """Create a test event."""
     with app.app_context():
+        # First create a test user if needed
+        user = User.query.filter_by(username='testuser').first()
+        if not user:
+            user = User(
+                username='testuser',
+                email='testuser@test.com',
+                password='password123',
+                first_name='Test',
+                last_name='User',
+                role='user'
+            )
+            db.session.add(user)
+            db.session.commit()
+        
         event = Event(
             title='Test Event',
             description='This is a test event description',
@@ -82,11 +104,15 @@ def test_event(app, test_user):
             capacity=100,
             category='workshop',
             status='published',
-            creator_id=test_user.id
+            creator_id=user.id
         )
         db.session.add(event)
         db.session.commit()
-        return event
+        event_id = event.id
+    
+    # Return a fresh event instance
+    with app.app_context():
+        return Event.query.get(event_id)
 
 
 @pytest.fixture

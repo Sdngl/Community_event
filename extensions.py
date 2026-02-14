@@ -4,7 +4,7 @@ Centralizes all Flask extension instances for the application.
 """
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, AnonymousUserMixin
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
 
@@ -13,6 +13,28 @@ db = SQLAlchemy()
 
 # Initialize Flask-Login for user authentication
 login_manager = LoginManager()
+
+
+class AnonymousUser(AnonymousUserMixin):
+    """Custom AnonymousUser class with additional methods for templates."""
+    
+    def is_organizer(self):
+        """Return False for anonymous users."""
+        return False
+    
+    def is_admin(self):
+        """Return False for anonymous users."""
+        return False
+    
+    @property
+    def is_authenticated(self):
+        """Return False for anonymous users."""
+        return False
+    
+    @property
+    def is_active(self):
+        """Return False for anonymous users."""
+        return False
 
 # Initialize CSRF protection for forms
 csrf = CSRFProtect()
@@ -33,6 +55,9 @@ def init_extensions(app):
     
     # Initialize login manager
     login_manager.init_app(app)
+    
+    # Set custom anonymous user class
+    login_manager.anonymous_user = AnonymousUser
     
     # Initialize CSRF protection
     csrf.init_app(app)

@@ -57,7 +57,7 @@ class User(db.Model, UserMixin):
     events_created = db.relationship('Event', backref='creator', lazy='dynamic', 
                                      foreign_keys='Event.creator_id')
     registrations = db.relationship('EventRegistration', backref='registrant', 
-                                    lazy='dynamic', foreign_keys='EventRegistration.user_id')
+                                    lazy='dynamic', foreign_keys='EventRegistration.user_id', overlaps="event_registrations,user")
     
     def __repr__(self):
         """String representation of User object."""
@@ -237,7 +237,7 @@ class EventRegistration(db.Model):
     
     # Relationships
     user = db.relationship('User', backref='event_registrations', 
-                          foreign_keys=[user_id])
+                          foreign_keys=[user_id], overlaps="registrant,registrations")
     
     def __repr__(self):
         """String representation of EventRegistration object."""
@@ -277,8 +277,8 @@ class Category(db.Model):
     color = db.Column(db.String(20), default='primary')
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     
-    # Relationship
-    events = db.relationship('Event', backref='category_rel', lazy='dynamic')
+    # Relationship - removed problematic backref that requires FK
+    pass
     
     def __repr__(self):
         return f'<Category {self.name}>'

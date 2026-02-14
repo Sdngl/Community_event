@@ -17,11 +17,11 @@ class TestEventModel:
     
     def test_is_upcoming(self, test_event):
         """Test upcoming event detection."""
-        assert test_event.is_upcoming()
+        assert test_event.is_upcoming
     
     def test_is_registration_open(self, test_event):
         """Test registration open status."""
-        assert test_event.is_registration_open()
+        assert test_event.is_registration_open
     
     def test_available_spots(self, test_event):
         """Test available spots calculation."""
@@ -29,7 +29,7 @@ class TestEventModel:
     
     def test_is_full(self, test_event):
         """Test full event detection."""
-        assert not test_event.is_full()
+        assert not test_event.is_full
 
 
 class TestEventRoutes:
@@ -59,14 +59,33 @@ class TestEventRoutes:
         assert response.status_code == 200
         assert b'Create New Event' in response.data
     
-    def test_create_event(self, client, login_test_user, app):
+    def test_create_event(self, client, app):
         """Test successful event creation."""
         with app.app_context():
+            # Create an organizer user
+            from models import User
+            organizer = User(
+                username='eventorganizer',
+                email='organizer@test.com',
+                password='password123',
+                first_name='Event',
+                last_name='Organizer',
+                role='organizer'
+            )
+            db.session.add(organizer)
+            db.session.commit()
+            
+            # Login as organizer
+            client.post(url_for('auth.login'), data={
+                'email_or_username': organizer.username,
+                'password': 'password123'
+            }, follow_redirects=True)
+            
             response = client.post(url_for('events.create_event'), data={
                 'title': 'Test Event',
                 'description': 'This is a test event description',
                 'location': 'Test Location',
-                'event_date': (datetime.utcnow() + timedelta(days=7)).strftime('%Y-%m-%dT%H:%M'),
+                'event_date': (datetime.utcnow() + timedelta(days=7)).strftime('%Y-%m-%d %H:%M'),
                 'capacity': 100,
                 'category': 'workshop',
                 'status': 'published'

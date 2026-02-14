@@ -132,6 +132,53 @@ def dashboard():
     total_registrations = len(registrations)
     upcoming_count = len(upcoming_registrations)
     events_created = len(my_events)
+
+    # Analytics Data Preparation
+    
+    # 1. Registrations over time (last 30 days) for events created by user (if organizer)
+    dates_data = []
+    counts_data = []
+    
+    if current_user.is_organizer() and my_events:
+        # Get all event IDs created by user
+        event_ids = [e.id for e in my_events]
+        
+        if event_ids:
+            # Query registrations for these events
+            thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+            
+            daily_registrations = db.session.query(
+                func.date(EventRegistration.registration_date).label('date'),
+                func.count(EventRegistration.id).label('count')
+            ).filter(
+                EventRegistration.event_id.in_(event_ids),
+                EventRegistration.registration_date >= thirty_days_ago
+            ).group_by('date').all()
+            
+            # Format for Chart.js
+            registrations_dict = {str(day.date): day.count for day in daily_registrations}
+            
+            # Fill in missing days
+            for i in range(30):
+                d = (datetime.utcnow() - timedelta(days=29-i)).strftime('%Y-%m-%d')
+                dates_data.append(d)
+                counts_data.append(registrations_dict.get(d, 0))
+
+    # 2. Events by Category (for organizer)
+    category_labels = []
+    category_counts = []
+    
+    if current_user.is_organizer() and my_events:
+        cat_stats = db.session.query(
+            Event.category,
+            func.count(Event.id)
+        ).filter(
+            Event.creator_id == current_user.id
+        ).group_by(Event.category).all()
+        
+        for cat, count in cat_stats:
+            category_labels.append(cat or 'Uncategorized')
+            category_counts.append(count)
     
     return render_template(
         'user/dashboard.html',
@@ -141,7 +188,12 @@ def dashboard():
         my_events=my_events,
         total_registrations=total_registrations,
         upcoming_count=upcoming_count,
-        events_created=events_created
+        events_created=events_created,
+        # Analytics Data
+        dates_data=dates_data,
+        counts_data=counts_data,
+        category_labels=category_labels,
+        category_counts=category_counts
     )
 
 

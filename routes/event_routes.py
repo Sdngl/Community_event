@@ -164,6 +164,9 @@ def calendar():
     # Month name
     month_name = first_day.strftime('%B %Y')
     
+    # Get current datetime for today comparison
+    now = datetime.utcnow()
+    
     return render_template(
         'events/calendar.html',
         title='Event Calendar',
@@ -174,7 +177,10 @@ def calendar():
         prev_year=prev_year,
         prev_month=prev_month,
         next_year=next_year,
-        next_month=next_month
+        next_month=next_month,
+        first_day=first_day,
+        last_day=last_day,
+        now=now
     )
 
 

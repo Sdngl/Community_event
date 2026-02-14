@@ -250,7 +250,6 @@ class EventForm(FlaskForm):
         ('workshop', 'Workshop'),
         ('seminar', 'Seminar'),
         ('meetup', 'Meetup'),
-        ('conference', 'Conference'),
         ('social', 'Social'),
         ('sports', 'Sports'),
         ('cultural', 'Cultural'),

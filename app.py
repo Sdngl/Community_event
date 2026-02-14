@@ -4,6 +4,7 @@ A Flask-based web application for managing community events.
 """
 
 import os
+from datetime import datetime
 from flask import Flask, render_template
 from config import config
 from extensions import init_extensions
@@ -92,7 +93,7 @@ def create_app(config_name='default'):
                 timestamp = int(os.path.getmtime(filepath))
                 return f'/static/{filename}?v={timestamp}'
             return f'/static/{filename}'
-        return {'static_url': static_url}
+        return {'static_url': static_url, 'datetime': datetime}
     
     # Database creation command
     @app.cli.command('create-db')
@@ -207,7 +208,7 @@ if __name__ == '__main__':
     app = create_app('development')
     
     # Get port from environment or use default
-    port = int(os.environ.get('FLASK_RUN_PORT', 5002))
+    port = int(os.environ.get('FLASK_RUN_PORT', 8000))
     host = os.environ.get('FLASK_RUN_HOST', '0.0.0.0')
     
     # Run the application

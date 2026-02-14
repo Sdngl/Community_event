@@ -29,7 +29,9 @@ class TestAuthentication:
                 'username': 'newuser',
                 'email': 'newuser@test.com',
                 'password': 'password123',
-                'confirm_password': 'password123'
+                'confirm_password': 'password123',
+                'first_name': 'New',
+                'last_name': 'User'
             }, follow_redirects=True)
             assert response.status_code == 200
             assert b'Registration successful' in response.data
@@ -41,7 +43,9 @@ class TestAuthentication:
                 'username': test_user.username,
                 'email': 'different@test.com',
                 'password': 'password123',
-                'confirm_password': 'password123'
+                'confirm_password': 'password123',
+                'first_name': 'Different',
+                'last_name': 'User'
             }, follow_redirects=True)
             assert response.status_code == 200
             assert b'already taken' in response.data
