@@ -81,8 +81,8 @@
                                     <a href="{{ url_for('main.notifications') }}" class="text-decoration-none small">View All</a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
-                                {% set recent_notifications = current_user.notifications|sort(attribute='created_at', reverse=true)|slice(0, 5) %}
-                                {% if recent_notifications|length > 0 %}
+                                {% set recent_notifications = (current_user.notifications|sort(attribute='created_at', reverse=true))[:5] %}
+                                {% if recent_notifications %}
                                     {% for notification in recent_notifications %}
                                         <li>
                                             <a class="dropdown-item {% if not notification.is_read %}bg-light{% endif %} py-2" href="{{ url_for('main.notifications') }}">

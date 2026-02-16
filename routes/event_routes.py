@@ -100,6 +100,13 @@ def index():
     # Get categories for filter dropdown
     categories = Category.query.all()
     
+    # Calculate quick filter dates
+    today = datetime.utcnow().strftime('%Y-%m-%d')
+    week_start = (datetime.utcnow() + timedelta(days=1)).strftime('%Y-%m-%d')
+    week_end = (datetime.utcnow() + timedelta(days=7)).strftime('%Y-%m-%d')
+    month_start = (datetime.utcnow() + timedelta(days=1)).strftime('%Y-%m-%d')
+    month_end = (datetime.utcnow() + timedelta(days=30)).strftime('%Y-%m-%d')
+    
     return render_template(
         'events/event_list.html',
         title='Upcoming Events',
@@ -110,7 +117,12 @@ def index():
         location=location,
         date_from=date_from,
         date_to=date_to,
-        categories=categories
+        categories=categories,
+        today=today,
+        week_start=week_start,
+        week_end=week_end,
+        month_start=month_start,
+        month_end=month_end
     )
 
 
