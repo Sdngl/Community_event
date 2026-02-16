@@ -1,39 +1,97 @@
 <!-- Event Calendar Page -->
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+@media (max-width: 768px) {
+    .calendar-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: center;
+    }
+    .calendar-header .btn-group {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    .calendar-day {
+        min-height: 50px !important;
+        padding: 0.25rem !important;
+    }
+    .calendar-day .fw-bold {
+        font-size: 0.75rem;
+    }
+    .calendar-day a {
+        font-size: 0.65rem !important;
+        line-height: 1.2;
+    }
+    .calendar-day img {
+        width: 8px !important;
+        height: 8px !important;
+    }
+    .mobile-event-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    .mobile-event-card img, 
+    .mobile-event-card > div:first-child {
+        margin: 0 auto 0.5rem auto !important;
+        width: 100% !important;
+        max-width: 80px;
+    }
+    .mobile-event-card h6 {
+        font-size: 0.9rem;
+    }
+    .mobile-event-card small {
+        font-size: 0.75rem;
+    }
+}
+@media (max-width: 576px) {
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    h1, h2 {
+        font-size: 1.25rem !important;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
+<div class="container py-3 py-md-4">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-3 calendar-header">
         <div>
-            <h1 class="fw-bold"><i class="fas fa-calendar me-2"></i>Event Calendar</h1>
-            <p class="text-muted">Browse events by date</p>
+            <h1 class="fw-bold h4 h-md-1 mb-1"><i class="fas fa-calendar me-2"></i>Event Calendar</h1>
+            <p class="text-muted mb-0 small">Browse events by date</p>
         </div>
-        <div class="btn-group">
-            <a href="{{ url_for('events.calendar', year=prev_year, month=prev_month) }}" class="btn btn-outline-primary">
-                <i class="fas fa-chevron-left"></i> Previous
+        <div class="btn-group flex-wrap" role="group" aria-label="Calendar navigation">
+            <a href="{{ url_for('events.calendar', year=prev_year, month=prev_month) }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-chevron-left d-md-none"></i><span class="d-none d-md-inline">Previous</span>
             </a>
-            <a href="{{ url_for('events.calendar') }}" class="btn btn-outline-secondary">
-                Today
-            </a>
-            <a href="{{ url_for('events.calendar', year=next_year, month=next_month) }}" class="btn btn-outline-primary">
-                Next <i class="fas fa-chevron-right"></i>
+            <a href="{{ url_for('events.calendar') }}" class="btn btn-outline-secondary btn-sm">Today</a>
+            <a href="{{ url_for('events.calendar', year=next_year, month=next_month) }}" class="btn btn-outline-primary btn-sm">
+                <span class="d-none d-md-inline">Next</span><i class="fas fa-chevron-right d-md-none"></i>
             </a>
         </div>
     </div>
 
     <!-- Month Title -->
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">{{ month_name }}</h2>
+    <div class="text-center mb-3 mb-md-4">
+        <h2 class="fw-bold h5">{{ month_name }} {{ year }}</h2>
     </div>
 
-    <!-- Calendar Grid -->
-    <div class="card border-0 shadow">
-        <div class="card-body p-4">
+    <!-- Calendar Grid - Desktop -->
+    <div class="card border-0 shadow d-none d-md-block">
+        <div class="card-body p-2 p-lg-4">
             <!-- Weekday Headers -->
-            <div class="row mb-3">
+            <div class="row mb-2">
                 {% for day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
-                    <div class="col text-center fw-bold text-muted py-2">
+                    <div class="col text-center fw-bold text-muted py-2 small">
                         {{ day }}
                     </div>
                 {% endfor %}
@@ -43,13 +101,11 @@
             {% set first_day_of_week = first_day.strftime('%w')|int %}
             {% set days_in_month = (last_day - first_day).days + 1 %}
             
-            <div class="row g-2">
-                <!-- Empty cells before first day -->
+            <div class="row g-1 g-lg-2">
                 {% for i in range(first_day_of_week) %}
-                    <div class="col-1"></div>
+                    <div class="col"></div>
                 {% endfor %}
                 
-                <!-- Days of the month -->
                 {% for day in range(1, days_in_month + 1) %}
                     {% set current_date = datetime(year, month, day) %}
                     {% set date_key = current_date.strftime('%Y-%m-%d') %}
@@ -57,9 +113,9 @@
                     {% set is_today = current_date.strftime('%Y-%m-%d') == now.strftime('%Y-%m-%d') %}
                     {% set is_past = current_date < now %}
                     
-                    <div class="col-1">
-                        <div class="calendar-day p-2 rounded {% if is_today %}bg-primary text-white{% elif is_past %}bg-light text-muted{% else %}bg-white border{% endif %}" style="min-height: 100px;">
-                            <div class="fw-bold {% if is_today %}text-white{% endif %}">{{ day }}</div>
+                    <div class="col">
+                        <div class="calendar-day p-1 p-lg-2 rounded text-center {% if is_today %}bg-primary text-white{% elif is_past %}bg-light text-muted{% else %}bg-white border{% endif %}" style="min-height: 60px;">
+                            <div class="fw-bold small {% if is_today %}text-white{% endif %}">{{ day }}</div>
                             
                             {% if day_events %}
                                 <div class="mt-1">
@@ -67,50 +123,101 @@
                                         <a href="{{ url_for('events.event_detail', event_id=event.id) }}" 
                                            class="d-block text-decoration-none small {% if is_today or is_past %}text-white{% else %}text-primary{% endif %} truncate"
                                            title="{{ event.title }}">
-                                            {% if event.image_filename %}
-                                                <img src="{{ url_for('static', filename='uploads/' + event.image_filename) }}" 
-                                                     class="rounded me-1" style="width: 16px; height: 16px; object-fit: cover;">
-                                            {% else %}
-                                                <i class="fas fa-calendar-alt me-1"></i>
-                                            {% endif %}
-                                            {{ event.title[:15] }}{{ '...' if event.title|length > 15 else '' }}
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            {{ event.title[:8] }}{{ '..' if event.title|length > 8 else '' }}
                                         </a>
                                     {% endfor %}
                                     {% if day_events|length > 2 %}
-                                        <small class="{% if is_today or is_past %}text-white{% else %}text-muted{% endif %}">
-                                            +{{ day_events|length - 2 }} more
-                                        </small>
+                                        <small class="{% if is_today or is_past %}text-white{% else %}text-muted{% endif %}">+{{ day_events|length - 2 }}</small>
                                     {% endif %}
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                     
-                    <!-- New row every 7 days -->
                     {% if (first_day_of_week + day) % 7 == 0 and day < days_in_month %}
-                        </div><div class="row g-2">
+                        </div><div class="row g-1 g-lg-2">
                     {% endif %}
                 {% endfor %}
                 
-                <!-- Empty cells after last day -->
                 {% set remaining_cells = (7 - ((first_day_of_week + days_in_month) % 7)) % 7 %}
                 {% for i in range(remaining_cells) %}
-                    <div class="col-1"></div>
+                    <div class="col"></div>
                 {% endfor %}
             </div>
         </div>
     </div>
 
+    <!-- Mobile View - List Format -->
+    <div class="d-md-none">
+        {% set has_events = false %}
+        {% set first_day_of_week = first_day.strftime('%w')|int %}
+        {% set days_in_month = (last_day - first_day).days + 1 %}
+        
+        {% for day in range(1, days_in_month + 1) %}
+            {% set current_date = datetime(year, month, day) %}
+            {% set date_key = current_date.strftime('%Y-%m-%d') %}
+            {% set day_events = events_by_date.get(date_key, []) %}
+            {% set is_today = current_date.strftime('%Y-%m-%d') == now.strftime('%Y-%m-%d') %}
+            {% set is_past = current_date < now %}
+            
+            {% if day_events %}
+                {% set has_events = true %}
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-header bg-{% if is_today %}primary{% else %}light{% endif %} py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold {% if is_today %}text-white{% elif is_past %}text-muted{% endif %}">
+                                {{ current_date.strftime('%b %d, %Y') }}
+                            </span>
+                            {% if is_today %}
+                                <span class="badge bg-white text-primary">Today</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        {% for event in day_events %}
+                            <a href="{{ url_for('events.event_detail', event_id=event.id) }}" 
+                               class="d-flex align-items-center p-2 mb-2 rounded bg-light text-decoration-none mobile-event-card">
+                                <div class="bg-{% if is_past %}secondary{% else %}primary{% endif %} rounded d-flex align-items-center justify-content-center flex-shrink-0" 
+                                     style="width: 45px; height: 45px;">
+                                    <i class="fas fa-calendar-alt text-white small"></i>
+                                </div>
+                                <div class="ms-2 flex-grow-1">
+                                    <h6 class="mb-0 small fw-bold">{{ event.title }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>{{ event.event_date.strftime('%I:%M %p') }}
+                                        {% if event.location %}
+                                        <span class="d-block"><i class="fas fa-map-marker-alt me-1"></i>{{ event.location[:20] }}</span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <i class="fas fa-chevron-right text-muted small"></i>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        
+        {% if not has_events %}
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No events this month</p>
+                <a href="{{ url_for('events.index') }}" class="btn btn-primary btn-sm">Browse All Events</a>
+            </div>
+        {% endif %}
+    </div>
+
     <!-- Legend -->
-    <div class="mt-4 text-center">
-        <span class="me-3"><span class="badge bg-primary me-1"></span> Today</span>
-        <span class="me-3"><span class="badge bg-light border me-1"></span> Upcoming</span>
-        <span class="me-3"><span class="badge bg-secondary me-1"></span> Past</span>
+    <div class="mt-3 mt-md-4 text-center">
+        <span class="me-2 me-md-3 small"><span class="badge bg-primary me-1"></span> Today</span>
+        <span class="me-2 me-md-3 small"><span class="badge bg-light border me-1"></span> Upcoming</span>
+        <span class="small"><span class="badge bg-secondary me-1"></span> Past</span>
     </div>
 
     <!-- Quick Links -->
-    <div class="mt-4 text-center">
-        <a href="{{ url_for('events.index') }}" class="btn btn-outline-primary">
+    <div class="mt-3 mt-md-4 text-center">
+        <a href="{{ url_for('events.index') }}" class="btn btn-outline-primary btn-sm">
             <i class="fas fa-list me-2"></i>View as List
         </a>
     </div>

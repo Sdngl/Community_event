@@ -1,122 +1,145 @@
 <!-- Register Page - Join Our Community -->
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+@media (max-width: 576px) {
+    .register-card {
+        margin: 0 -0.5rem;
+        border-radius: 0;
+    }
+    .register-card .card-body {
+        padding: 1.5rem 1rem;
+    }
+    .icon-box {
+        width: 48px !important;
+        height: 48px !important;
+    }
+    .icon-box i {
+        font-size: 1.25rem !important;
+    }
+    .form-control, .btn {
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    .input-group-text {
+        padding: 0.5rem 0.75rem;
+    }
+    .btn-lg {
+        padding: 0.75rem 1rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
+<div class="container py-3 py-md-5">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
-            <div class="card border-0 shadow-lg">
-                <div class="card-body p-5">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+            <div class="card border-0 shadow-lg register-card">
+                <div class="card-body p-3 p-md-4 p-lg-5">
                     <!-- Header -->
-                    <div class="text-center mb-4">
-                        <div class="icon-box bg-primary bg-gradient mx-auto mb-3" style="width: 64px; height: 64px;">
-                            <i class="fas fa-user-plus fa-2x text-white"></i>
+                    <div class="text-center mb-3 mb-md-4">
+                        <div class="icon-box bg-primary bg-gradient mx-auto mb-2 mb-md-3" style="width: 56px; height: 56px">
+                            <i class="fas fa-user-plus fa-lg text-white"></i>
                         </div>
-                        <h2 class="fw-bold mb-1">Join EventHub</h2>
-                        <p class="text-muted mb-0">Create your account and start discovering events</p>
+                        <h2 class="fw-bold mb-1" style="font-size: 1.5rem;">Join EventHub</h2>
+                        <p class="text-muted mb-0 small">
+                            Create your account and start discovering events
+                        </p>
                     </div>
 
                     <!-- Registration Form -->
                     <form method="POST" action="{{ url_for('auth.register') }}">
                         {{ form.hidden_tag() }}
-                        
+
                         <!-- Username Field -->
-                        <div class="mb-3">
+                        <div class="mb-2 mb-md-3">
                             {{ form.username.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-user text-muted"></i>
                                 </span>
-                                {{ form.username(class="form-control", placeholder="Choose a unique username") }}
+                                {{ form.username(class="form-control", placeholder="Choose a username") }}
                             </div>
                             {% if form.username.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.username.errors[0] }}
-                                </div>
+                            <div class="text-danger small mt-1">
+                                {{ form.username.errors[0] }}
+                            </div>
                             {% endif %}
                         </div>
 
                         <!-- Email Field -->
-                        <div class="mb-3">
+                        <div class="mb-2 mb-md-3">
                             {{ form.email.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-envelope text-muted"></i>
                                 </span>
-                                {{ form.email(class="form-control", placeholder="Enter your email address") }}
+                                {{ form.email(class="form-control", placeholder="Enter your email") }}
                             </div>
                             {% if form.email.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.email.errors[0] }}
-                                </div>
+                            <div class="text-danger small mt-1">
+                                {{ form.email.errors[0] }}
+                            </div>
                             {% endif %}
                         </div>
 
                         <!-- Name Fields Row -->
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
+                        <div class="row g-2 mb-2 mb-md-3">
+                            <div class="col-6">
                                 {{ form.first_name.label(class="form-label") }}
-                                {{ form.first_name(class="form-control", placeholder="First name") }}
+                                {{ form.first_name(class="form-control", placeholder="First") }}
                                 {% if form.first_name.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.first_name.errors[0] }}
-                                    </div>
+                                <div class="text-danger small mt-1">{{ form.first_name.errors[0] }}</div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-6">
                                 {{ form.last_name.label(class="form-label") }}
-                                {{ form.last_name(class="form-control", placeholder="Last name") }}
+                                {{ form.last_name(class="form-control", placeholder="Last") }}
                                 {% if form.last_name.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {{ form.last_name.errors[0] }}
-                                    </div>
+                                <div class="text-danger small mt-1">{{ form.last_name.errors[0] }}</div>
                                 {% endif %}
                             </div>
                         </div>
 
                         <!-- Password Field -->
-                        <div class="mb-3">
+                        <div class="mb-2 mb-md-3">
                             {{ form.password.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-lock text-muted"></i>
                                 </span>
-                                {{ form.password(class="form-control", placeholder="Create a strong password") }}
+                                {{ form.password(class="form-control", placeholder="Create a password") }}
                                 <button class="btn btn-outline-secondary toggle-password" type="button">
                                     <i class="fas fa-eye text-muted"></i>
                                 </button>
                             </div>
                             {% if form.password.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.password.errors[0] }}
-                                </div>
+                            <div class="text-danger small mt-1">{{ form.password.errors[0] }}</div>
                             {% endif %}
-                            <div class="form-text">Use at least 8 characters with letters and numbers</div>
+                            <div class="form-text small">At least 8 characters</div>
                         </div>
 
                         <!-- Confirm Password Field -->
-                        <div class="mb-4">
+                        <div class="mb-3 mb-md-4">
                             {{ form.confirm_password.label(class="form-label") }}
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-lock text-muted"></i>
                                 </span>
-                                {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+                                {{ form.confirm_password(class="form-control", placeholder="Confirm password") }}
                             </div>
                             {% if form.confirm_password.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ form.confirm_password.errors[0] }}
-                                </div>
+                            <div class="text-danger small mt-1">{{ form.confirm_password.errors[0] }}</div>
                             {% endif %}
                         </div>
 
                         <!-- Terms Checkbox -->
-                        <div class="mb-4">
+                        <div class="mb-3 mb-md-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="terms" required>
                                 <label class="form-check-label text-muted small" for="terms">
-                                    I agree to the <a href="{{ url_for('main.terms') }}">Terms of Service</a> 
-                                    and <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>
+                                    I agree to the <a href="{{ url_for('main.terms') }}">Terms</a> and <a href="{{ url_for('main.privacy') }}">Privacy</a>
                                 </label>
                             </div>
                         </div>
@@ -130,7 +153,7 @@
                     </form>
 
                     <!-- Divider -->
-                    <div class="my-4 text-center">
+                    <div class="my-3 my-md-4 text-center">
                         <span class="text-muted small">Already have an account?</span>
                     </div>
 
@@ -142,10 +165,10 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Back to Home -->
-            <div class="text-center mt-4">
-                <a href="{{ url_for('main.home') }}" class="text-muted text-decoration-none">
+            <div class="text-center mt-3 mt-md-4">
+                <a href="{{ url_for('main.home') }}" class="text-muted text-decoration-none small">
                     <i class="fas fa-arrow-left me-1"></i>Back to Home
                 </a>
             </div>
@@ -156,21 +179,20 @@
 
 {% block extra_js %}
 <script>
-    // Toggle password visibility
-    document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            const icon = this.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
+document.querySelectorAll(".toggle-password").forEach((button) => {
+    button.addEventListener("click", function () {
+        const input = this.previousElementSibling;
+        const icon = this.querySelector("i");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
     });
+});
 </script>
 {% endblock %}
