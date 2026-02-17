@@ -34,6 +34,7 @@
                             {% if event.is_registration_open and event.available_spots > 0 %}
                                 {% if is_registered %}
                                     <form action="{{ url_for('events.unregister_from_event', event_id=event.id) }}" method="POST">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <button type="submit" class="btn btn-outline-danger"
                                                 onclick="return confirm('Are you sure you want to unregister?')">
                                             <i class="fas fa-times me-1"></i>Unregister
@@ -41,6 +42,7 @@
                                     </form>
                                 {% else %}
                                     <form action="{{ url_for('events.register_for_event', event_id=event.id) }}" method="POST">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <button type="submit" class="btn btn-primary btn-lg"
                                                 onclick="return confirm('Are you sure you want to register for this event?')">
                                             <i class="fas fa-ticket-alt me-1"></i>Register Now
@@ -63,6 +65,7 @@
                                 </a>
                                 {% if current_user.is_admin() or event.creator_id == current_user.id %}
                                     <form action="{{ url_for('events.delete_event', event_id=event.id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <button type="submit" class="btn btn-outline-danger btn-lg"
                                                 onclick="return confirm('Are you sure you want to delete this event? This action cannot be undone.')">
                                             <i class="fas fa-trash me-1"></i>Delete
@@ -221,6 +224,7 @@
                         <h4>Register Now!</h4>
                         <p>Don't miss out! Only {{ event.available_spots }} spots left.</p>
                         <form action="{{ url_for('events.register_for_event', event_id=event.id) }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <button type="submit" class="btn btn-primary w-100"
                                     onclick="return confirm('Are you sure you want to register for this event?')">
                                 <i class="fas fa-check me-1"></i>Confirm Registration

@@ -232,11 +232,11 @@ class EventForm(FlaskForm):
         Length(max=255, message='Location must be less than 255 characters')
     ])
     
-    event_date = DateTimeField('Event Date & Time', format='%Y-%m-%d %H:%M', validators=[
+    event_date = DateTimeField('Event Date & Time', format='%Y-%m-%dT%H:%M', validators=[
         DataRequired(message='Event date and time is required')
     ])
     
-    registration_deadline = DateTimeField('Registration Deadline', format='%Y-%m-%d %H:%M', validators=[
+    registration_deadline = DateTimeField('Registration Deadline', format='%Y-%m-%dT%H:%M', validators=[
         Optional()
     ])
     
@@ -400,11 +400,11 @@ class AdminEventEditForm(FlaskForm):
         Length(max=255, message='Location must be less than 255 characters')
     ])
     
-    event_date = DateTimeField('Event Date & Time', format='%Y-%m-%d %H:%M', validators=[
+    event_date = DateTimeField('Event Date & Time', format='%Y-%m-%dT%H:%M', validators=[
         DataRequired(message='Event date and time is required')
     ])
     
-    registration_deadline = DateTimeField('Registration Deadline', format='%Y-%m-%d %H:%M', validators=[
+    registration_deadline = DateTimeField('Registration Deadline', format='%Y-%m-%dT%H:%M', validators=[
         Optional()
     ])
     

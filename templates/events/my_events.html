@@ -57,7 +57,8 @@
                                     </a>
                                     <form action="{{ url_for('events.delete_event', event_id=event.id) }}" 
                                           method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-outline-danger" 
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" class="btn btn-outline-danger"
                                                 title="Delete"
                                                 onclick="return confirm('Delete this event?')">
                                             <i class="fas fa-trash"></i>
