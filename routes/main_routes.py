@@ -7,8 +7,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_required, current_user
 from forms import UpdateProfileForm
 from models import User, Event, EventRegistration, Notification, db
-from datetime import datetime
-from sqlalchemy import func
+from datetime import datetime, timedelta
+from sqlalchemy import func, extract
 
 
 # Create main blueprint
@@ -25,11 +25,26 @@ def home():
     Returns:
         Rendered home template
     """
-    # Get upcoming published events
-    upcoming_events = Event.query.filter(
+    # Get upcoming published events (2 events per month)
+    now = datetime.utcnow()
+    all_upcoming = Event.query.filter(
         Event.status == 'published',
-        Event.event_date > datetime.utcnow()
-    ).order_by(Event.event_date.asc()).limit(6).all()
+        Event.event_date > now
+    ).order_by(Event.event_date.asc()).all()
+    
+    # Group events by month and limit to 2 per month
+    events_by_month = {}
+    for event in all_upcoming:
+        month_key = (event.event_date.year, event.event_date.month)
+        if month_key not in events_by_month:
+            events_by_month[month_key] = []
+        if len(events_by_month[month_key]) < 2:
+            events_by_month[month_key].append(event)
+    
+    # Flatten back to list, sorted by date
+    upcoming_events = []
+    for month in sorted(events_by_month.keys()):
+        upcoming_events.extend(events_by_month[month])
     
     # Get featured events (most registered)
     featured_events = Event.query.join(EventRegistration)\

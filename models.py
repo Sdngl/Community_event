@@ -57,7 +57,8 @@ class User(db.Model, UserMixin):
     events_created = db.relationship('Event', backref='creator', lazy='dynamic', 
                                      foreign_keys='Event.creator_id')
     registrations = db.relationship('EventRegistration', backref='registrant', 
-                                    lazy='dynamic', foreign_keys='EventRegistration.user_id', overlaps="event_registrations,user")
+                                    lazy='dynamic', foreign_keys='EventRegistration.user_id', 
+                                    overlaps="event_registrations,user_registrations,user")
     
     def __repr__(self):
         """String representation of User object."""
@@ -235,9 +236,8 @@ class EventRegistration(db.Model):
     # Unique constraint to prevent duplicate registrations
     __table_args__ = (db.UniqueConstraint('user_id', 'event_id', name='_user_event_uc'),)
     
-    # Relationships
-    user = db.relationship('User', backref='event_registrations', 
-                          foreign_keys=[user_id], overlaps="registrant,registrations")
+    # Relationships - removed duplicate backref to avoid conflicts
+    user = db.relationship('User', foreign_keys=[user_id], overlaps="registrant,registrations,user_registrations")
     
     def __repr__(self):
         """String representation of EventRegistration object."""
