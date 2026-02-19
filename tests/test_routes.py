@@ -13,14 +13,14 @@ class TestMainRoutes:
         """Test home page loads successfully."""
         response = client.get(url_for('main.home'))
         assert response.status_code == 200
-        assert b'EventHub' in response.data
+        assert b'CrowdConnect' in response.data
         assert b'Upcoming Events' in response.data
     
     def test_about_page(self, client):
         """Test about page loads successfully."""
         response = client.get(url_for('main.about'))
         assert response.status_code == 200
-        assert b'About EventHub' in response.data
+        assert b'About CrowdConnect' in response.data
     
     def test_contact_page(self, client):
         """Test contact page loads successfully."""

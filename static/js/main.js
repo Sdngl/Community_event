@@ -1,5 +1,5 @@
 /*
- * EventHub - Main JavaScript
+ * CrowdConnect - Main JavaScript
  */
 
 // ===== DOM Ready =====

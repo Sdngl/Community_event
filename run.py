@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-EventHub - Community Event Management System
+CrowdConnect - Community Event Management System
 Entry point for running the Flask application.
 """
 
