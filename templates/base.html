@@ -42,169 +42,6 @@
   </head>
   <body>
     <!-- Navigation -->
- HEAD
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.home') }}">
-                <i class="fas fa-calendar-check text-primary me-2"></i>
-                <span class="fw-bold">EventHub</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}" href="{{ url_for('main.home') }}">
-                            <i class="fas fa-home me-1"></i>Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if 'event' in request.endpoint %}active{% endif %}" href="{{ url_for('events.index') }}">
-                            <i class="fas fa-compass me-1"></i>Browse Events
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'events.calendar' %}active{% endif %}" href="{{ url_for('events.calendar') }}">
-                            <i class="fas fa-calendar me-1"></i>Calendar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.about' %}active{% endif %}" href="{{ url_for('main.about') }}">
-                            <i class="fas fa-info-circle me-1"></i>About
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.contact' %}active{% endif %}" href="{{ url_for('main.contact') }}">
-                            <i class="fas fa-envelope me-1"></i>Contact
-                        </a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    {% if current_user.is_authenticated %}
-                        <!-- Notification Bell -->
-                        <li class="nav-item dropdown me-2">
-                            <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" 
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-bell fa-lg"></i>
-                                {% set unread_count = current_user.notifications|selectattr('is_read', 'equalto', false)|list|length %}
-                                {% if unread_count > 0 %}
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ unread_count }}
-                                        <span class="visually-hidden">unread notifications</span>
-                                    </span>
-                                {% endif %}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown" style="width: 320px; max-height: 400px; overflow-y: auto;">
-                                <li class="dropdown-header d-flex justify-content-between align-items-center">
-                                    <span>Notifications</span>
-                                    <a href="{{ url_for('main.notifications') }}" class="text-decoration-none small">View All</a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                {% set recent_notifications = (current_user.notifications|sort(attribute='created_at', reverse=true))[:5] %}
-                                {% if recent_notifications %}
-                                    {% for notification in recent_notifications %}
-                                        <li>
-                                            <a class="dropdown-item {% if not notification.is_read %}bg-light{% endif %} py-2" href="{{ url_for('main.notifications') }}">
-                                                <div class="d-flex">
-                                                    <div class="me-2">
-                                                        {% if notification.notification_type == 'success' %}
-                                                            <i class="fas fa-check-circle text-success"></i>
-                                                        {% elif notification.notification_type == 'warning' %}
-                                                            <i class="fas fa-exclamation-triangle text-warning"></i>
-                                                        {% elif notification.notification_type == 'danger' %}
-                                                            <i class="fas fa-exclamation-circle text-danger"></i>
-                                                        {% else %}
-                                                            <i class="fas fa-info-circle text-info"></i>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div>
-                                                        <strong class="d-block">{{ notification.title[:30] }}</strong>
-                                                        <small class="text-muted">{{ notification.created_at.strftime('%b %d, %I:%M %p') }}</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                {% else %}
-                                    <li class="text-center py-3 text-muted">
-                                        <i class="fas fa-bell-slash mb-2"></i>
-                                        <p class="mb-0 small">No notifications</p>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </li>
-                        
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" 
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="avatar avatar-sm me-2" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                    {{ current_user.username[0].upper() }}
-                                </div>
-                                <span class="d-none d-md-inline">{{ current_user.username }}</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{{ url_for('main.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ url_for('main.profile', username=current_user.username) }}">
-                                        <i class="fas fa-user me-2"></i>My Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ url_for('events.my_events') }}">
-                                        <i class="fas fa-calendar-plus me-2"></i>My Events
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ url_for('events.registered_events') }}">
-                                        <i class="fas fa-ticket-alt me-2"></i>Registered Events
-                                    </a>
-                                </li>
-                                {% if current_user.is_organizer() %}
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" href="{{ url_for('events.create_event') }}">
-                                            <i class="fas fa-plus-circle me-2"></i>Create Event
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                {% if current_user.is_admin() %}
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item text-primary" href="{{ url_for('admin.dashboard') }}">
-                                            <i class="fas fa-cogs me-2"></i>Admin Panel
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.login') }}">
-                                <i class="fas fa-sign-in-alt me-1"></i>Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-primary text-white ms-lg-2 px-3" href="{{ url_for('auth.register') }}" style="border-radius: var(--radius);">
-                                <i class="fas fa-user-plus me-1"></i>Register
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-=======
     <nav
       class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm"
     >
@@ -308,8 +145,8 @@
                 <li><hr class="dropdown-divider" /></li>
                 {% set recent_notifications =
                 current_user.notifications|sort(attribute='created_at',
-                reverse=true)|slice(0, 5) %} {% if recent_notifications|length >
-                0 %} {% for notification in recent_notifications %}
+                reverse=true)|list %} {% if recent_notifications|length > 0 %} {%
+                for notification in recent_notifications[:5] %}
                 <li>
                   <a
                     class="dropdown-item {% if not notification.is_read %}bg-light{% endif %} py-2"
@@ -463,7 +300,6 @@
             </li>
             {% endif %}
           </ul>
->>>>>>> 7d7d93d (change to crowdconnect)
         </div>
       </div>
     </nav>
@@ -595,3 +431,4 @@
     {% block extra_js %}{% endblock %}
   </body>
 </html>
+
