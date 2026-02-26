@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="socialGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899"/>
+      <stop offset="100%" style="stop-color:#f472b6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#socialGrad)"/>
+  
+  <!-- Party/Celebration icons -->
+  <!-- Balloon 1 -->
+  <ellipse cx="120" cy="120" rx="30" ry="40" fill="white" opacity="0.8" transform="rotate(-15 120 120)"/>
+  <line x1="120" y1="160" x2="120" y2="220" stroke="white" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Balloon 2 -->
+  <ellipse cx="180" cy="100" rx="25" ry="35" fill="white" opacity="0.85" transform="rotate(10 180 100)"/>
+  <line x1="180" y1="135" x2="180" y2="200" stroke="white" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Balloon 3 -->
+  <ellipse cx="280" cy="110" rx="28" ry="38" fill="white" opacity="0.8" transform="rotate(-5 280 110)"/>
+  <line x1="280" y1="148" x2="280" y2="210" stroke="white" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Confetti -->
+  <rect x="80" y="80" width="8" height="8" fill="white" opacity="0.6" transform="rotate(30 84 84)"/>
+  <rect x="200" y="60" width="6" height="6" fill="white" opacity="0.5" transform="rotate(45 203 63)"/>
+  <rect x="320" y="90" width="7" height="7" fill="white" opacity="0.6" transform="rotate(20 323 93)"/>
+  <rect x="150" y="180" width="5" height="5" fill="white" opacity="0.5" transform="rotate(60 152 182)"/>
+  <rect x="260" y="170" width="6" height="6" fill="white" opacity="0.5" transform="rotate(15 263 173)"/>
+  
+  <!-- Toast glasses -->
+  <path d="M 160 230 L 160 260 L 180 270 L 180 240 Z" fill="white" opacity="0.7"/>
+  <path d="M 220 230 L 220 260 L 240 270 L 240 240 Z" fill="white" opacity="0.7"/>
+  
+  <!-- Decorative -->
+  <circle cx="350" cy="50" r="25" fill="white" opacity="0.1"/>
+  <circle cx="40" cy="260" r="30" fill="white" opacity="0.1"/>
+</svg>

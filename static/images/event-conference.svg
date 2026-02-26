@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="confGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#confGrad)"/>
+  
+  <!-- Microphone/Podium -->
+  <rect x="185" y="120" width="30" height="80" rx="5" fill="white" opacity="0.9"/>
+  <ellipse cx="200" cy="115" rx="35" ry="20" fill="white" opacity="0.8"/>
+  <rect x="170" y="200" width="60" height="40" rx="5" fill="white" opacity="0.7"/>
+  
+  <!-- Audience silhouettes -->
+  <ellipse cx="100" cy="250" rx="30" ry="15" fill="white" opacity="0.3"/>
+  <ellipse cx="170" cy="260" rx="30" ry="15" fill="white" opacity="0.3"/>
+  <ellipse cx="240" cy="260" rx="30" ry="15" fill="white" opacity="0.3"/>
+  <ellipse cx="310" cy="250" rx="30" ry="15" fill="white" opacity="0.3"/>
+  
+  <!-- Spotlight effect -->
+  <polygon points="200,50 150,220 250,220" fill="white" opacity="0.1"/>
+  
+  <!-- Decorative -->
+  <circle cx="50" cy="60" r="20" fill="white" opacity="0.1"/>
+  <circle cx="360" cy="240" r="30" fill="white" opacity="0.1"/>
+</svg>

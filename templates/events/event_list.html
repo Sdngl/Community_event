@@ -124,10 +124,18 @@
                                         <img src="{{ url_for('static', filename='uploads/' + event.image_filename) }}" 
                                              class="card-img-top" alt="{{ event.title }}" style="height: 180px; object-fit: cover;">
                                     {% else %}
-                                        <div class="card-img-top d-flex align-items-center justify-content-center bg-secondary" 
-                                             style="height: 180px;">
-                                            <i class="fas fa-calendar-alt fa-4x text-white"></i>
-                                        </div>
+                                        {% set category_img = 'images/event-default.svg' %}
+                                        {% if event.category == 'workshop' %}
+                                            {% set category_img = 'images/event-workshop.svg' %}
+                                        {% elif event.category == 'meetup' %}
+                                            {% set category_img = 'images/event-meetup.svg' %}
+                                        {% elif event.category == 'conference' %}
+                                            {% set category_img = 'images/event-conference.svg' %}
+                                        {% elif event.category == 'social' %}
+                                            {% set category_img = 'images/event-social.svg' %}
+                                        {% endif %}
+                                        <img src="{{ url_for('static', filename=category_img) }}" 
+                                             class="card-img-top" alt="{{ event.title }}" style="height: 180px; object-fit: cover;">
                                     {% endif %}
                                     <span class="position-absolute top-0 start-0 m-3 badge bg-primary">
                                         {{ event.category|title }}
