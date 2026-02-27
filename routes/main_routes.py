@@ -1,6 +1,20 @@
 """
-Main routes for pages like home, about, and contact.
-Handles general website navigation and user-facing pages.
+CrowdConnect - Main Routes
+==========================
+
+This module handles all general website navigation and user-facing pages:
+- Home page with upcoming and featured events
+- About page with project information
+- Contact page for user inquiries
+- FAQ and privacy policy pages
+- User dashboard and profile management
+
+These routes are publicly accessible and form the main navigation structure
+of the website. The dashboard requires authentication.
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort

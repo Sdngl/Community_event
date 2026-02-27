@@ -1,6 +1,20 @@
 """
-Admin routes for system management.
-Handles user management, event management, and administrative functions.
+CrowdConnect - Administrative Routes
+====================================
+
+This module handles all administrative functions and system management:
+- Admin dashboard with statistics overview
+- User management (view, edit, delete, change roles)
+- Event management (view, edit, delete any event)
+- Registration management (view all event registrations)
+- System statistics and reporting
+
+Access is restricted to users with admin role using the @admin_required
+before_request hook. All routes require authentication.
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort

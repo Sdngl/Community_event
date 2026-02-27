@@ -1,6 +1,19 @@
 """
-Configuration settings for the Event Management System.
-Handles all application configuration including database, secret keys, and app settings.
+CrowdConnect - Configuration Settings
+======================================
+
+This module handles all application configuration for the Event Management System.
+It defines configuration classes for different environments (development, production,
+testing) and manages settings for:
+- Database connections (SQLite for development, PostgreSQL/MySQL for production)
+- Security keys and session management
+- File upload restrictions
+- Email server configuration (for future features)
+- Pagination and other application constants
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 import os

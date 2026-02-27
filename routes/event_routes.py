@@ -1,6 +1,22 @@
 """
-Event routes for CRUD operations on events.
-Handles event listing, creation, viewing, editing, and registration.
+CrowdConnect - Event Management Routes
+======================================
+
+This module handles all event-related CRUD operations:
+- Event listing with filtering and search
+- Event creation (organizers and admins only)
+- Event detail viewing
+- Event editing and deletion
+- Event registration and unregistration
+- User's registered events and created events
+
+The routes include role-based access control to ensure only authorized
+users can create, edit, or delete events. File uploads for event images
+are supported.
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
@@ -455,31 +471,37 @@ def register_for_event(event_id):
     """
     Register current user for an event.
     
+    This function handles the event registration process with multiple validation checks:
+    1. Verify event exists and registration is open
+    2. Check event capacity is not exceeded
+    3. Prevent duplicate registrations
+    4. Prevent event creators from registering for their own events
+    
     Args:
         event_id: ID of the event to register for
     
     Returns:
         Redirect to event detail with status message
     """
-    # Get event by ID
+    # Retrieve event from database
     event = Event.query.get_or_404(event_id)
     
-    # Check if registration is open
+    # Validation 1: Check if registration deadline has not passed and event is published
     if not event.is_registration_open:
         flash('Registration for this event is closed.', 'warning')
         return redirect(url_for('events.event_detail', event_id=event.id))
     
-    # Check if event is full
+    # Validation 2: Check available capacity before allowing registration
     if event.is_full:
         flash('This event is fully booked.', 'warning')
         return redirect(url_for('events.event_detail', event_id=event.id))
     
-    # Check if already registered
+    # Validation 3: Prevent user from registering multiple times for the same event
     if event.is_user_registered(current_user.id):
         flash('You are already registered for this event.', 'info')
         return redirect(url_for('events.event_detail', event_id=event.id))
     
-    # Check if user is the creator
+    # Validation 4: Event creators cannot register for their own events
     if event.creator_id == current_user.id:
         flash('You cannot register for your own event.', 'warning')
         return redirect(url_for('events.event_detail', event_id=event.id))

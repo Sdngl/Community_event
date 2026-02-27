@@ -1,6 +1,18 @@
 """
-Event Management System - Main Application Factory.
-A Flask-based web application for managing community events.
+CrowdConnect - Event Management System
+=====================================
+
+Main application factory module for the Flask-based web application.
+This file contains the core application setup, including:
+- Flask app initialization and configuration
+- Database extension initialization
+- Blueprint registration for modular routing
+- Custom template filters for datetime formatting
+- CLI commands for database management
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 import os

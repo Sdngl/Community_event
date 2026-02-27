@@ -1,6 +1,20 @@
 """
-Authentication routes for user registration, login, and logout.
-Handles all authentication-related HTTP requests.
+CrowdConnect - Authentication Routes
+====================================
+
+This module handles all authentication-related HTTP requests including:
+- User registration with validation
+- User login with session management
+- User logout with session cleanup
+- Password change functionality
+- User loader callback for Flask-Login
+
+The routes use Flask-Login for session management and WTForms for input validation.
+All routes are organized under the /auth URL prefix.
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app

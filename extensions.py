@@ -1,6 +1,20 @@
 """
-Flask extensions initialization.
-Centralizes all Flask extension instances for the application.
+CrowdConnect - Flask Extensions Initialization
+=============================================
+
+This module centralizes all Flask extension instances used throughout the application.
+Flask extensions provide additional functionality without modifying the core framework:
+- SQLAlchemy: Object-relational mapping (ORM) for database operations
+- Flask-Login: User session management and authentication
+- Flask-WTF CSRF: Cross-Site Request Forgery protection for forms
+- Flask-Migrate: Database migration management
+
+The init_extensions() function must be called during app factory setup to register
+all extensions with the Flask application instance.
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 from flask_sqlalchemy import SQLAlchemy

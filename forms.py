@@ -1,6 +1,23 @@
 """
-WTForms for the Event Management System.
-Defines all form classes for user input validation.
+CrowdConnect - WTForms Definitions
+=================================
+
+This module defines all form classes using Flask-WTF (WTForms) for user input validation.
+Forms provide server-side validation and CSRF protection for secure data handling.
+
+Form Classes:
+- RegistrationForm: User account creation with unique username/email validation
+- LoginForm: User authentication with remember me functionality
+- EventForm: Event creation and editing with required fields
+- SearchForm: Event search and filtering
+- AdminUserEditForm: Administrator user management
+- AdminEventEditForm: Administrator event management
+
+Each form includes appropriate validators for data length, format, and uniqueness.
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 from flask_wtf import FlaskForm

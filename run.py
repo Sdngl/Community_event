@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 """
-CrowdConnect - Community Event Management System
-Entry point for running the Flask application.
+CrowdConnect - Application Entry Point
+====================================
+
+This is the main entry point for running the CrowdConnect Flask application.
+It creates an instance of the Flask app using the development configuration
+and starts the development server.
+
+Author:  Sworoop
+Date:    February 2026
+Version: 1.0.0
 """
 
 from app import create_app
