@@ -4,24 +4,28 @@ CrowdConnect - Application Entry Point
 ====================================
 
 This is the main entry point for running the CrowdConnect Flask application.
-It creates an instance of the Flask app using the development configuration
-and starts the development server.
+It supports both local development and Render deployment.
 
-Author:  Sworoop
-Date:    February 2026
-Version: 1.0.0
+Author: Sworoop
+Date: February 2026
+Version: 1.1.0
 """
 
+import os
 from app import create_app
 
-# Create application instance
-app = create_app('development')
+# Determine environment: 'development' locally, 'production' on Render
+env = os.environ.get('FLASK_ENV', 'development')
+
+# Create Flask app instance
+app = create_app(env)
 
 if __name__ == '__main__':
-    # Run the Flask development server
+    # Local development only
+    port = int(os.environ.get('PORT', 8000))  # Use Render PORT if set, else 8000
     app.run(
         host='0.0.0.0',
-        port=8000,
+        port=port,
         debug=True,
         use_reloader=True
     )
