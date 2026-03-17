@@ -14,15 +14,15 @@ Version: 1.1.0
 import os
 from app import create_app
 
-# Determine environment: 'development' locally, 'production' on Render
+# Determine environment
 env = os.environ.get('FLASK_ENV', 'development')
 
-# Create Flask app instance
+# Create the Flask app
 app = create_app(env)
 
+# Only run server if this file is executed directly (local development)
 if __name__ == '__main__':
-    # Local development only
-    port = int(os.environ.get('PORT', 8000))  # Use Render PORT if set, else 8000
+    port = int(os.environ.get('PORT', 8000))
     app.run(
         host='0.0.0.0',
         port=port,
