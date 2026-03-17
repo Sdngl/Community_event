@@ -78,7 +78,7 @@ Replace contents with:
 import os
 import sys
 
-path = '/home/yourusername/Community_event'
+path = '/home/Swowroop/Community_event'
 if path not in sys.path:
     sys.path.insert(0, path)
 
@@ -98,9 +98,9 @@ Click **Save**
 
 Go to **Web** tab → Under **Static files**:
 
-| URL        | Directory                                    |
-| ---------- | -------------------------------------------- |
-| `/static/` | `/home/yourusername/Community_event/static/` |
+| URL        | Directory                                |
+| ---------- | ---------------------------------------- |
+| `/static/` | `/home/Swowroop/Community_event/static/` |
 
 Click **Enter** to add the mapping.
 
@@ -109,7 +109,7 @@ Click **Enter** to add the mapping.
 ### 9. Create Uploads Directory
 
 ```bash
-cd /home/yourusername/Community_event
+cd /home/Swowroop/Community_event
 mkdir -p static/uploads
 ```
 
@@ -123,7 +123,7 @@ Go to **Web** tab → Click **Reload**
 
 ### 11. Visit Your Site
 
-Open: `https://yourusername.pythonanywhere.com`
+Open: `https://Swowroop.pythonanywhere.com`
 
 ---
 
